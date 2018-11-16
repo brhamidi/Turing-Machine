@@ -6,7 +6,7 @@
 (*   By: bhamidi <marvin@42.fr>                     +#+  +:+       +#+        *)
 (*                                                +#+#+#+#+#+   +#+           *)
 (*   Created: 2018/11/14 16:13:45 by bhamidi           #+#    #+#             *)
-(*   Updated: 2018/11/15 18:51:07 by bhamidi          ###   ########.fr       *)
+(*   Updated: 2018/11/16 18:25:37 by msrun            ###   ########.fr       *)
 (*                                                                            *)
 (* ************************************************************************** *)
 
@@ -20,4 +20,6 @@ type transitions
 
 type t
 
-val getMachine : string -> string -> t Try
+type 'a trying = Some of 'a | Failure of string
+
+val getMachine : string -> string -> t trying

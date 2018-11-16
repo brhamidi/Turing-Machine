@@ -6,7 +6,7 @@
 (*   By: bhamidi <marvin@42.fr>                     +#+  +:+       +#+        *)
 (*                                                +#+#+#+#+#+   +#+           *)
 (*   Created: 2018/11/14 16:37:19 by bhamidi           #+#    #+#             *)
-(*   Updated: 2018/11/15 19:01:24 by bhamidi          ###   ########.fr       *)
+(*   Updated: 2018/11/16 18:08:51 by msrun            ###   ########.fr       *)
 (*                                                                            *)
 (* ************************************************************************** *)
 
@@ -32,9 +32,9 @@ type descriptions =
     transitions: transitions;
   }
 
-type t = Tape.t * descriptions
+type t = (Tape.t * descriptions)
 
-type Try = Some of 'a | Failure of string
+type 'a trying = Some of 'a | Failure of string
 
 let getTransitions l =
   let f x y = match y with
@@ -62,11 +62,11 @@ let getBlank str =
   | _ -> 'r'
 
 let getListStr lstr =
-  le lS = match lstr with | `List l -> l | _ -> [] in
+  let lS = match lstr with | `List l -> l | _ -> [] in
   List.fold_left (fun x y -> (match y with | `String x -> x | _ -> "") :: x) [] lS
 
 
-let getDescrition name : descriptions Try =
+let getDescrition name : descriptions trying =
   let t = Yojson.Basic.from_file name in
   let f1 (x : Yojson.Basic.json) = match x with
     | (`Assoc y ) -> getTransitions y
@@ -80,11 +80,11 @@ let getDescrition name : descriptions Try =
     initial = getStr (Yojson.Basic.Util.member "initial" t);
     finals = getListStr (Yojson.Basic.Util.member "finals" t);
     transitions = f1 (Yojson.Basic.Util.member "transitions" t)
-   }
+  }
 
-let getMachine jsonfile input =
+let getMachine jsonfile input : t trying =
   let desc = getDescrition jsonfile in
   match desc with
   | Failure e -> Failure e
   | Some description ->
-    ((Tape.of_list ['1';'1';'1';'-';'1'], description)
+    Some (Tape.tape_of_list ['1';'1';'1';'-';'1';'='], description)
