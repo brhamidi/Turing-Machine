@@ -6,7 +6,7 @@
 (*   By: bhamidi <marvin@42.fr>                     +#+  +:+       +#+        *)
 (*                                                +#+#+#+#+#+   +#+           *)
 (*   Created: 2018/11/14 16:37:19 by bhamidi           #+#    #+#             *)
-(*   Updated: 2018/11/16 18:08:51 by msrun            ###   ########.fr       *)
+(*   Updated: 2018/11/19 16:04:46 by msrun            ###   ########.fr       *)
 (*                                                                            *)
 (* ************************************************************************** *)
 
@@ -36,51 +36,63 @@ type t = (Tape.t * descriptions)
 
 type 'a trying = Some of 'a | Failure of string
 
+exception Parsing_error of string
+
 let getTransitions l =
   let f x y = match y with
-    | `Assoc [("read", `String a);("to_state", `String b);("write", `String c);("action", `String d)] -> CharMap.add (String.get a 0) ( b, String.get c 0, d) x
-    | _ -> print_endline "Error: transition not valid"; CharMap.add '0' ("REJECTED", '0', "ERROR") CharMap.empty
+    | `Assoc [("read", `String a); ("to_state", `String b); ("write", `String c); ("action", `String d)] ->
+      CharMap.add (String.get a 0) ( b, String.get c 0, d) x
+    | _ -> raise (Parsing_error "Error while parsing transitions field.")
   in
   let fillCmap l = List.fold_left (fun x y -> f x y) CharMap.empty l
   in
-  let fillSmap l = List.fold_left (fun x y -> match y with | (transi, lt) -> StateMap.add transi (fillCmap ( match lt with | `List x -> x | _ -> [])) x) StateMap.empty l
+  let fillSmap l =
+    List.fold_left (fun x y -> match y with | (transi, lt) ->
+    StateMap.add transi (fillCmap ( match lt with | `List x -> x | _ -> raise (Parsing_error "Error while parsing transitions field."))) x) StateMap.empty l
   in
   fillSmap l
 
 let getStr str =
   match str with
   | `String s -> s
-  | _ -> "Error"
+  | _ -> raise (Parsing_error "Error while parsing string field.")
 
 let getAlphabet l =
-  let lA = match l with | `List l -> l | _ -> [] in
+  let lA = match l with
+    | `List l -> l
+    | _ -> raise (Parsing_error "Error while parsing alphabet field") in
   List.fold_left (fun x y -> (match y with | `String x -> String.get x 0 | _ -> 'r') :: x) [] lA
 
 let getBlank str =
   match str with
   | `String s -> String.get s 0
-  | _ -> 'r'
+  | _ -> raise (Parsing_error "Error while parsing blank field.")
 
 let getListStr lstr =
-  let lS = match lstr with | `List l -> l | _ -> [] in
-  List.fold_left (fun x y -> (match y with | `String x -> x | _ -> "") :: x) [] lS
+  let lS = match lstr with | `List l -> l | _ -> raise (Parsing_error "Error while parsing list of string") in
+  List.fold_left (fun x y -> (match y with | `String x -> x | _ -> raise (Parsing_error "Error while parsing list of string")) :: x) [] lS
 
+let callFunction f field json =
+  f (Yojson.Basic.Util.member field json)
 
 let getDescrition name : descriptions trying =
   let t = Yojson.Basic.from_file name in
-  let f1 (x : Yojson.Basic.json) = match x with
+  let getTran (x : Yojson.Basic.json) =
+    match x with
     | (`Assoc y ) -> getTransitions y
     | _ -> StateMap.empty
   in
-  Some {
-    name = getStr (Yojson.Basic.Util.member "names" t);
-    alphabet = getAlphabet (Yojson.Basic.Util.member "alphabet" t);
-    blank = getBlank (Yojson.Basic.Util.member "blank" t);
-    states = getListStr (Yojson.Basic.Util.member "states" t);
-    initial = getStr (Yojson.Basic.Util.member "initial" t);
-    finals = getListStr (Yojson.Basic.Util.member "finals" t);
-    transitions = f1 (Yojson.Basic.Util.member "transitions" t)
-  }
+  try Some {
+    name = callFunction getStr "name" t;
+    alphabet = callFunction getAlphabet "alphabet" t;
+    blank = callFunction getBlank "blank" t;
+    states = callFunction getListStr "states" t;
+    initial = callFunction getStr "initial" t;
+    finals = callFunction getListStr "finals" t;
+    transitions = callFunction getTran "transitions" t
+  } with
+  | Parsing_error err -> Failure err
+  | _ -> Failure "Error while parsing input"
 
 let getMachine jsonfile input : t trying =
   let desc = getDescrition jsonfile in
