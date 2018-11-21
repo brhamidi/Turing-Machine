@@ -6,7 +6,7 @@
 (*   By: bhamidi <marvin@42.fr>                     +#+  +:+       +#+        *)
 (*                                                +#+#+#+#+#+   +#+           *)
 (*   Created: 2018/11/14 17:53:30 by bhamidi           #+#    #+#             *)
-(*   Updated: 2018/11/20 15:21:05 by msrun            ###   ########.fr       *)
+(*   Updated: 2018/11/21 16:07:02 by msrun            ###   ########.fr       *)
 (*                                                                            *)
 (* ************************************************************************** *)
 
@@ -29,3 +29,34 @@ let prev = function
   | prev :: prev_tl, item, next ->
     prev_tl, prev, item :: next
   | [], item, next -> [], '.', item :: next
+
+let newCurrent tape newC =
+  match tape with
+  | prev, _, next -> prev, newC, next
+
+let print tape len =
+  let rec printerLeft t l =
+    if (l > 0)
+    then
+      (
+        let newTape = prev t in
+        printerLeft newTape (l - 1);
+        print_char (current newTape);
+      )
+  in
+  let rec printerRight t l =
+    if (l > 0)
+    then
+      (
+        let newTape = next t in
+        print_char (current newTape);
+        printerRight newTape (l - 1)
+      )
+  in
+  printerLeft tape len;
+  print_string "\027[31m";
+  print_char (current tape);
+  print_string "\027[0m";
+  printerRight tape len;
+  print_char '\n'
+

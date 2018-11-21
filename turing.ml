@@ -6,7 +6,7 @@
 (*   By: bhamidi <marvin@42.fr>                     +#+  +:+       +#+        *)
 (*                                                +#+#+#+#+#+   +#+           *)
 (*   Created: 2018/11/14 16:37:19 by bhamidi           #+#    #+#             *)
-(*   Updated: 2018/11/20 18:52:55 by msrun            ###   ########.fr       *)
+(*   Updated: 2018/11/21 18:43:25 by msrun            ###   ########.fr       *)
 (*                                                                            *)
 (* ************************************************************************** *)
 
@@ -36,7 +36,11 @@ type t = (Tape.t * descriptions)
 
 type 'a trying = Some of 'a | Failure of string
 
+type move = Right | Left
+
 exception Parsing_error of string
+
+exception Error
 
 let getTransitions l =
   let f x y = match y with
@@ -116,19 +120,28 @@ let search_alphabet alphabet letter =
   match List.find (fun x -> (x = letter)) alphabet with
   | _ -> ()
 
-let search_state x states =
-  match List.find (fun y -> y = x) states with
+let search_state_opt s states =
+  List.find_opt (fun y -> y = s) states
+
+let search_state s states =
+  match List.find (fun y -> y = s) states with
   | _ -> ()
 
 let check_description d =
   try match search_alphabet_opt d.alphabet d.blank with
     | Some _ ->
       begin
-        try List.iter (fun x ->
-            match search_state x d.states with
-            | _ -> ()) d.finals
-        with
-        | _ -> raise (Parsing_error "Error finals state not valid")
+        begin
+          try match search_state d.initial d.states with | _ -> () with
+          | _ -> raise (Parsing_error "Error initial state not valid")
+        end;
+        begin
+          try List.iter (fun x ->
+              match search_state x d.states with
+              | _ -> ()) d.finals
+          with
+          | _ -> raise (Parsing_error "Error finals state not valid")
+        end
       end;
       begin
         try (StateMap.iter (fun x y ->
@@ -179,11 +192,33 @@ let getMachine jsonfile input : t trying =
   | Some description ->
     begin
       match (check_description description) with
-      | Failure x -> print_string x
-      | _ -> print_string "ok"
-    end;
-    if (check_input input description.blank)
-    then Some (Tape.tape_of_list (list_from_string input), description)
-    else Failure "Error there is blank in input."
+      | Failure x -> Failure x
+      | _ ->
+        if (check_input input description.blank)
+        then Some (Tape.tape_of_list (list_from_string input), description)
+        else Failure "Error there is blank in input."
+    end
 
 
+let compute (tape, description) =
+  let computeState state tape =
+    try (match (CharMap.find (Tape.current tape) (StateMap.find state description.transitions)) with
+        | (to_state, write, action) -> Some (to_state, (
+            match action with
+            | "LEFT" -> Tape.prev (Tape.newCurrent tape write)
+            | "RIGHT" -> Tape.next (Tape.newCurrent tape write)
+            | _ -> raise Error
+          ))) with
+    | _ -> Failure "Error"
+  in
+  let rec computing tape current_state =
+    match search_state_opt current_state description.finals with
+    | None ->
+      (
+          match (computeState current_state tape) with
+            | Some (next_state, newTape) -> Tape.print newTape 10; computing newTape next_state
+          | Failure e -> print_endline e
+      )
+    | _ -> ()
+  in
+  computing tape description.initial

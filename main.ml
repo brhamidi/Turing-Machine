@@ -6,7 +6,7 @@
 (*   By: bhamidi <marvin@42.fr>                     +#+  +:+       +#+        *)
 (*                                                +#+#+#+#+#+   +#+           *)
 (*   Created: 2018/11/12 15:30:46 by bhamidi           #+#    #+#             *)
-(*   Updated: 2018/11/16 18:09:27 by msrun            ###   ########.fr       *)
+(*   Updated: 2018/11/21 12:46:42 by msrun            ###   ########.fr       *)
 (*                                                                            *)
 (* ************************************************************************** *)
 
@@ -16,7 +16,7 @@ let usage bin =
 let main jsonfile input = 
   match (Turing.getMachine jsonfile input) with
   | Failure error -> print_endline error
-  | Some _ -> print_endline "Running Machine .."
+  | Some m -> print_endline "Running Machine .."; Turing.compute m
 
 let () =
   match (Array.to_list Sys.argv) with
