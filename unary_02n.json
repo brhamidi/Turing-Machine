@@ -1,0 +1,24 @@
+{
+	"name" : "unary_02n",
+	"alphabet": [ "0", ".", "=", "y", "n" ],
+	"blank" : ".",
+	"states" : [ "0p", "0i", "py", "pn", "HALT" ],
+	"initial" : "0p",
+	"finals" : [ "HALT" ],
+	"transitions" : {
+		"0p": [
+			{ "read" : "0", "to_state": "0i", "write": "0", "action": "RIGHT"},
+			{ "read" : "=", "to_state": "py", "write": "=", "action": "RIGHT"}
+		],
+		"0i": [
+			{ "read" : "0", "to_state": "0p", "write": "0", "action": "RIGHT"},
+			{ "read" : "=", "to_state": "pn", "write": "=", "action": "RIGHT"}
+		],
+		"py": [
+			{ "read" : ".", "to_state": "HALT", "write": "y", "action": "LEFT"}
+		],
+		"pn": [
+			{ "read" : ".", "to_state": "HALT", "write": "n", "action": "LEFT"}
+		]
+	}
+}

@@ -6,7 +6,7 @@
 (*   By: bhamidi <marvin@42.fr>                     +#+  +:+       +#+        *)
 (*                                                +#+#+#+#+#+   +#+           *)
 (*   Created: 2018/11/14 16:37:19 by bhamidi           #+#    #+#             *)
-(*   Updated: 2018/11/21 18:43:25 by msrun            ###   ########.fr       *)
+(*   Updated: 2018/11/22 17:41:19 by msrun            ###   ########.fr       *)
 (*                                                                            *)
 (* ************************************************************************** *)
 
@@ -49,14 +49,14 @@ let getTransitions l =
         match d with
         | "LEFT" | "RIGHT" -> CharMap.add (String.get a 0) ( b, String.get c 0, d) x
         | _ -> raise (Parsing_error ("Error while parsing transitions field, wrong action: " ^ d))
-end
+      end
     | _ -> raise (Parsing_error "Error while parsing transitions field.")
   in
   let fillCmap l = List.fold_left (fun x y -> f x y) CharMap.empty l
   in
   let fillSmap l =
     List.fold_left (fun x y -> match y with | (transi, lt) ->
-    StateMap.add transi (fillCmap ( match lt with | `List x -> x | _ -> raise (Parsing_error "Error while parsing transitions field."))) x) StateMap.empty l
+        StateMap.add transi (fillCmap ( match lt with | `List x -> x | _ -> raise (Parsing_error "Error while parsing transitions field."))) x) StateMap.empty l
   in
   fillSmap l
 
@@ -94,14 +94,14 @@ let getDescrition name : descriptions trying =
     | _ -> raise (Parsing_error "Error while parsing, no transitions.")
   in
   try Some {
-    name = callFunction getStr "name" t;
-    alphabet = callFunction getAlphabet "alphabet" t;
-    blank = callFunction getBlank "blank" t;
-    states = callFunction getListStr "states" t;
-    initial = callFunction getStr "initial" t;
-    finals = callFunction getListStr "finals" t;
-    transitions = callFunction getTran "transitions" t
-  } with
+      name = callFunction getStr "name" t;
+      alphabet = callFunction getAlphabet "alphabet" t;
+      blank = callFunction getBlank "blank" t;
+      states = callFunction getListStr "states" t;
+      initial = callFunction getStr "initial" t;
+      finals = callFunction getListStr "finals" t;
+      transitions = callFunction getTran "transitions" t
+    } with
   | Parsing_error err -> Failure err
   | _ -> Failure "Error while parsing input"
 
@@ -199,14 +199,34 @@ let getMachine jsonfile input : t trying =
         else Failure "Error there is blank in input."
     end
 
+let (^$) c s = (Char.escaped c) ^ s
+let ($^) s c = s ^ (Char.escaped c)
+
+let printDescription description =
+  let rec get_alphabet = function
+    | l :: [] -> Char.escaped l
+    | l :: next -> (Char.escaped l) ^ ", " ^ (get_alphabet next)
+    | [] -> ""
+  in
+  let rec get_strs = function
+    | s :: [] -> s
+    | s :: next -> (get_strs next) ^ ", " ^ s
+    | [] -> ""
+  in
+  print_endline ("Name: " ^ description.name);
+  print_endline ("Alphabet: [" ^ (get_alphabet description.alphabet) ^ "]");
+  print_endline ("States  : [" ^ get_strs description.states ^ "]");
+  print_endline ("Initial : " ^ description.initial);
+  print_endline ("Finals  : " ^ get_strs description.finals);
+  StateMap.iter (fun sk sv -> CharMap.iter (fun ck (ns, nc, mov) -> print_endline ("(" ^ sk ^ ", " ^ ck ^$ ") -> (" ^ ns ^ ", " ^ nc ^$ ", " ^ mov ^ ")")) sv) description.transitions
 
 let compute (tape, description) =
   let computeState state tape =
     try (match (CharMap.find (Tape.current tape) (StateMap.find state description.transitions)) with
-        | (to_state, write, action) -> Some (to_state, (
+        | (to_state, write, action) -> print_endline ("(" ^ state ^ ", " ^ Tape.current tape ^$ ") -> (" ^ to_state ^ ", " ^ write ^$ ", " ^ action ^ ")"); Some (to_state, (
             match action with
-            | "LEFT" -> Tape.prev (Tape.newCurrent tape write)
-            | "RIGHT" -> Tape.next (Tape.newCurrent tape write)
+            | "LEFT" -> let t = Tape.prev (Tape.newCurrent tape write) in Tape.print t 10; t
+            | "RIGHT" -> let t = Tape.next (Tape.newCurrent tape write) in Tape.print t 10; t
             | _ -> raise Error
           ))) with
     | _ -> Failure "Error"
@@ -215,10 +235,13 @@ let compute (tape, description) =
     match search_state_opt current_state description.finals with
     | None ->
       (
-          match (computeState current_state tape) with
-            | Some (next_state, newTape) -> Tape.print newTape 10; computing newTape next_state
-          | Failure e -> print_endline e
+        match (computeState current_state tape) with
+        | Some (next_state, newTape) -> computing newTape next_state
+        | Failure e -> print_endline e
       )
     | _ -> ()
   in
-  computing tape description.initial
+  printDescription description;
+  Tape.print tape 10;
+  computing tape description.initial;
+  print_char '\n'

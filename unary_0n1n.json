@@ -1,0 +1,49 @@
+{
+	"name" : "unary_0n1n",
+	"alphabet": [ "0", "1", ".", "=", "y", "n" ],
+	"blank" : ".",
+	"states" : [ "scanright", "erase1", "erasing1", "restart", "haltn", "halty", "py", "pn", "HALT" ],
+	"initial" : "scanright",
+	"finals" : [ "HALT" ],
+	"transitions" : {
+		"scanright": [
+			{ "read" : ".", "to_state": "scanright", "write": ".", "action": "RIGHT"},
+			{ "read" : "0", "to_state": "erase1", "write": ".", "action": "RIGHT"},
+			{ "read" : "1", "to_state": "haltn", "write": ".", "action": "RIGHT"},
+			{ "read" : "=", "to_state": "py" , "write": "=", "action": "RIGHT" }
+		],
+		"erase1": [
+			{ "read" : "0", "to_state": "erase1", "write": "0", "action": "RIGHT"},
+			{ "read" : "1", "to_state": "erase1", "write": "1", "action": "RIGHT"},
+			{ "read" : "=", "to_state": "erasing1" , "write": ".", "action": "LEFT"}
+		],
+		"erasing1": [
+			{ "read" : "1", "to_state": "restart", "write": "=", "action": "LEFT"},
+			{ "read" : "0", "to_state": "haltn" , "write": "0", "action": "RIGHT"},
+			{ "read" : ".", "to_state": "haltn" , "write": ".", "action": "RIGHT"}
+		],
+		"restart" : [
+			{ "read" : ".", "to_state": "scanright", "write": ".", "action": "RIGHT"},
+			{ "read" : "1", "to_state": "restart", "write": "1", "action": "LEFT"},
+			{ "read" : "0", "to_state": "restart", "write": "0", "action": "LEFT"}
+		],
+		"halty": [
+			{ "read" : "1", "to_state": "halty", "write": "1", "action": "RIGHT"},
+			{ "read" : "0", "to_state": "halty", "write": "0", "action": "RIGHT"},
+			{ "read" : ".", "to_state": "halty", "write": ".", "action": "RIGHT"},
+			{ "read" : "=", "to_state": "py", "write": "=", "action": "RIGHT"}
+		],
+		"haltn": [
+			{ "read" : "1", "to_state": "haltn", "write": "1", "action": "RIGHT"},
+			{ "read" : "0", "to_state": "haltn", "write": "0", "action": "RIGHT"},
+			{ "read" : ".", "to_state": "pn", "write": "=", "action": "RIGHT"},
+			{ "read" : "=", "to_state": "pn", "write": "=", "action": "RIGHT"}
+		],
+		"py": [
+			{ "read" : ".", "to_state": "HALT", "write": "y", "action": "RIGHT"}
+		],
+		"pn": [
+			{ "read" : ".", "to_state": "HALT", "write": "n", "action": "RIGHT"}
+		]
+	}
+}

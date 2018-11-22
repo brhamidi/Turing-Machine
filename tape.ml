@@ -6,7 +6,7 @@
 (*   By: bhamidi <marvin@42.fr>                     +#+  +:+       +#+        *)
 (*                                                +#+#+#+#+#+   +#+           *)
 (*   Created: 2018/11/14 17:53:30 by bhamidi           #+#    #+#             *)
-(*   Updated: 2018/11/21 16:07:02 by msrun            ###   ########.fr       *)
+(*   Updated: 2018/11/22 17:27:02 by msrun            ###   ########.fr       *)
 (*                                                                            *)
 (* ************************************************************************** *)
 
@@ -58,5 +58,3 @@ let print tape len =
   print_char (current tape);
   print_string "\027[0m";
   printerRight tape len;
-  print_char '\n'
-
