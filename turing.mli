@@ -10,14 +10,6 @@
 (*                                                                            *)
 (* ************************************************************************** *)
 
-type alphabet
-type blank
-type state
-type states
-type initial
-type finals
-type transitions
-
 type t
 
 type 'a trying = Some of 'a | Failure of string

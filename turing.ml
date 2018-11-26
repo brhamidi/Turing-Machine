@@ -107,10 +107,8 @@ let getDescrition name : descriptions trying =
 
 let list_from_string str =
   let rec get_list s i l =
-    if (i < 0)
-    then l
-    else get_list s (i - 1) ((String.get s i) :: l)
-  in
+    if (i < 0) then l
+    else get_list s (i - 1) ((String.get s i) :: l) in
   get_list str ((String.length str) - 1) []
 
 let search_alphabet_opt alphabet letter =
@@ -234,11 +232,11 @@ let compute (tape, description) =
   let rec computing tape current_state =
     match search_state_opt current_state description.finals with
     | None ->
-      (
+      begin
         match (computeState current_state tape) with
         | Some (next_state, newTape) -> computing newTape next_state
         | Failure e -> print_endline e
-      )
+      end
     | _ -> ()
   in
   printDescription description;
