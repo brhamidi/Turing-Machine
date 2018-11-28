@@ -16,7 +16,18 @@ let usage bin =
 let main jsonfile input = 
   match (Turing.getMachine jsonfile input) with
   | Failure error -> print_endline error
-  | Some m -> print_endline "Running Machine .."; Turing.compute m
+  | Some m ->
+    begin
+      print_endline "***** machine description *****";
+      print_endline "                               ";
+      print_endline "*******************************";
+      Turing.printDescription m;
+      print_endline "\n***** machine computing *****";
+      print_endline "                               ";
+      print_endline "*******************************";
+      Turing.compute m;
+      print_char '\n'
+    end
 
 let () =
   match (Array.to_list Sys.argv) with

@@ -36,25 +36,23 @@ let newCurrent tape newC =
 
 let print tape len =
   let rec printerLeft t l =
-    if (l > 0)
-    then
-      (
+    if (l > 0) then
+      begin
         let newTape = prev t in
         printerLeft newTape (l - 1);
         print_char (current newTape);
-      )
+      end
   in
   let rec printerRight t l =
-    if (l > 0)
-    then
-      (
+    if (l > 0) then
+      begin
         let newTape = next t in
         print_char (current newTape);
         printerRight newTape (l - 1)
-      )
+      end
   in
   printerLeft tape len;
   print_string "\027[31m";
   print_char (current tape);
   print_string "\027[0m";
-  printerRight tape len;
+  printerRight tape len

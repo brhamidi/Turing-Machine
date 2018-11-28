@@ -16,4 +16,6 @@ type 'a trying = Some of 'a | Failure of string
 
 val getMachine : string -> string -> t trying
 
+val printDescription : t -> unit
+
 val compute : t -> unit

@@ -200,7 +200,7 @@ let getMachine jsonfile input : t trying =
 let (^$) c s = (Char.escaped c) ^ s
 let ($^) s c = s ^ (Char.escaped c)
 
-let printDescription description =
+let printDescription (_, description) =
   let rec get_alphabet = function
     | l :: [] -> Char.escaped l
     | l :: next -> (Char.escaped l) ^ ", " ^ (get_alphabet next)
@@ -239,7 +239,5 @@ let compute (tape, description) =
       end
     | _ -> ()
   in
-  printDescription description;
   Tape.print tape 10;
-  computing tape description.initial;
-  print_char '\n'
+  computing tape description.initial
