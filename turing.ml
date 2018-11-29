@@ -250,3 +250,30 @@ let compute (tape, description) =
   in
   Tape.print tape 10 description.blank;
   computing tape description.initial
+
+let complexity (tape, description) =
+  let computeState state tape =
+    try
+      begin
+        match (CharMap.find (Tape.current tape) (StateMap.find state description.transitions)) with
+        | (to_state, write, action) -> Some (to_state, (
+            match action with
+            | "LEFT" -> Tape.prev description.blank (Tape.newCurrent tape write)
+            | "RIGHT" -> Tape.next description.blank (Tape.newCurrent tape write)
+            | _ -> raise Error
+          ))
+      end
+    with
+    | _ -> Failure "Error"
+  in
+  let rec computing tape current_state acc =
+    match search_state_opt current_state description.finals with
+    | None ->
+      begin
+        match (computeState current_state tape) with
+        | Some (next_state, newTape) -> computing newTape next_state (acc + 1)
+        | Failure e -> Failure e
+      end
+    | _ -> Some (acc)
+  in
+  computing tape description.initial 0

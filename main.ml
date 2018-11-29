@@ -29,8 +29,26 @@ let main jsonfile input =
       print_char '\n'
     end
 
+
+let complexity jsonfile input =
+  match (Turing.getMachine jsonfile input) with
+  | Failure error -> print_endline error
+  | Some m ->
+    begin
+      print_endline "***** machine description *****";
+      print_endline "                               ";
+      print_endline "*******************************";
+      Turing.printDescription m;
+      print_endline "\n***** machine complexity ****";
+      print_endline "                               ";
+      print_endline "*******************************";
+      match (Turing.complexity m) with
+      | Some n -> print_int n; print_endline " steps to compute"
+      | Failure e -> print_endline e
+    end
+
 let () =
   match (Array.to_list Sys.argv) with
   | _ :: jsonfile :: input :: [] -> main jsonfile input
-  | _ :: "--complexity" :: jsonfile :: input :: [] -> print_string "complexity mode not implemented\n" (*main jsonfile input*)
+  | _ :: "--complexity" :: jsonfile :: input :: [] -> complexity jsonfile input
   | _ -> usage (Array.get Sys.argv 0)
