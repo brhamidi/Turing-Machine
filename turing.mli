@@ -19,3 +19,5 @@ val getMachine : string -> string -> t trying
 val printDescription : t -> unit
 
 val compute : t -> unit
+
+val complexity : t -> int trying
