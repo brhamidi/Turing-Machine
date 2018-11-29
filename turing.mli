@@ -21,3 +21,7 @@ val printDescription : t -> unit
 val compute : t -> unit
 
 val complexity : t -> int trying
+
+(* TODO  add these function into `Complexity module` *)
+
+val print_time_complexity : string -> unit

@@ -277,3 +277,30 @@ let complexity (tape, description) =
     | _ -> Some (acc)
   in
   computing tape description.initial 0
+
+let generate_add x = "1+" ^ (String.init x (fun _ -> '1')) ^ "="
+
+let print_time_complexity jsonfile =
+  let gen_fun = 
+    match jsonfile with
+    | "unary_add.json" -> Some generate_add
+    | _ -> Failure "impossible to calculate time complexity for this description"
+  in
+  let rec computing fn acc =
+    match acc with
+    | 101 -> print_endline "FINISH"
+    | n ->
+      begin
+        match (getMachine jsonfile (fn acc)) with
+        | Failure err -> print_endline err
+        | Some m ->
+          begin
+            match (complexity m) with
+            | Failure e -> print_endline e
+            | Some n -> Printf.printf "input size %d -> %d ope\n" acc n ; computing fn (acc + 1)
+          end
+      end
+  in
+  match gen_fun with
+  | Failure e -> print_endline e
+  | Some gen_f -> computing gen_f 0
