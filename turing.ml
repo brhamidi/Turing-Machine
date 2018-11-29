@@ -87,23 +87,28 @@ let callFunction f field json =
   f (Yojson.Basic.Util.member field json)
 
 let getDescrition name : descriptions trying =
-  let t = Yojson.Basic.from_file name in
+  let t = try Some (Yojson.Basic.from_file name) with | _ -> Failure "json file error" in
   let getTran (x : Yojson.Basic.json) =
     match x with
     | (`Assoc y ) -> getTransitions y
     | _ -> raise (Parsing_error "Error while parsing, no transitions.")
   in
-  try Some {
-      name = callFunction getStr "name" t;
-      alphabet = callFunction getAlphabet "alphabet" t;
-      blank = callFunction getBlank "blank" t;
-      states = callFunction getListStr "states" t;
-      initial = callFunction getStr "initial" t;
-      finals = callFunction getListStr "finals" t;
-      transitions = callFunction getTran "transitions" t
-    } with
-  | Parsing_error err -> Failure err
-  | _ -> Failure "Error while parsing input"
+  match t with
+  | Failure e -> Failure e
+  | Some t ->
+    begin 
+      try Some {
+          name = callFunction getStr "name" t;
+          alphabet = callFunction getAlphabet "alphabet" t;
+          blank = callFunction getBlank "blank" t;
+          states = callFunction getListStr "states" t;
+          initial = callFunction getStr "initial" t;
+          finals = callFunction getListStr "finals" t;
+          transitions = callFunction getTran "transitions" t
+        } with
+      | Parsing_error err -> Failure err
+      | _ -> Failure "Error while parsing input"
+    end
 
 let list_from_string str =
   let rec get_list s i l =
