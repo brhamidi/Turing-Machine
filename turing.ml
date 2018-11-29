@@ -193,7 +193,7 @@ let getMachine jsonfile input : t trying =
       | Failure x -> Failure x
       | _ ->
         if (check_input input description.blank)
-        then Some (Tape.tape_of_list (list_from_string input), description)
+        then Some ((Tape.tape_of_list description.blank (list_from_string input)), description)
         else Failure "Error there is blank in input."
     end
 
@@ -220,13 +220,17 @@ let printDescription (_, description) =
 
 let compute (tape, description) =
   let computeState state tape =
-    try (match (CharMap.find (Tape.current tape) (StateMap.find state description.transitions)) with
+    try
+      begin
+        match (CharMap.find (Tape.current tape) (StateMap.find state description.transitions)) with
         | (to_state, write, action) -> print_endline ("(" ^ state ^ ", " ^ Tape.current tape ^$ ") -> (" ^ to_state ^ ", " ^ write ^$ ", " ^ action ^ ")"); Some (to_state, (
             match action with
-            | "LEFT" -> let t = Tape.prev (Tape.newCurrent tape write) in Tape.print t 10; t
-            | "RIGHT" -> let t = Tape.next (Tape.newCurrent tape write) in Tape.print t 10; t
+            | "LEFT" -> let t = Tape.prev description.blank (Tape.newCurrent tape write) in Tape.print t 10 description.blank ; t
+            | "RIGHT" -> let t = Tape.next description.blank (Tape.newCurrent tape write) in Tape.print t 10 description.blank; t
             | _ -> raise Error
-          ))) with
+          ))
+      end
+    with
     | _ -> Failure "Error"
   in
   let rec computing tape current_state =
@@ -239,5 +243,5 @@ let compute (tape, description) =
       end
     | _ -> ()
   in
-  Tape.print tape 10;
+  Tape.print tape 10 description.blank;
   computing tape description.initial

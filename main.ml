@@ -11,9 +11,9 @@
 (* ************************************************************************** *)
 
 let usage bin =
-  print_string bin ; print_endline " jsonfile input"
+  print_string bin ; print_endline " [--complexity] jsonfile input"
 
-let main jsonfile input = 
+let main jsonfile input =
   match (Turing.getMachine jsonfile input) with
   | Failure error -> print_endline error
   | Some m ->
@@ -32,4 +32,5 @@ let main jsonfile input =
 let () =
   match (Array.to_list Sys.argv) with
   | _ :: jsonfile :: input :: [] -> main jsonfile input
+  | _ :: "--complexity" :: jsonfile :: input :: [] -> print_string "complexity mode not implemented\n" (*main jsonfile input*)
   | _ -> usage (Array.get Sys.argv 0)

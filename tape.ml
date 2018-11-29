@@ -10,35 +10,34 @@
 (*                                                                            *)
 (* ************************************************************************** *)
 
-
 type t = char list * char * char list
 
-let tape_of_list = function
+let tape_of_list blank = function
   | hd :: tl -> [], hd, tl
-  | [] -> [], '.', []
+  | [] -> [], blank, []
 
 let current = function
   | _, item, _ -> item
 
-let next = function
+let next blank = function
   | prev, item, next :: next_tl ->
     item :: prev, next, next_tl
-  | prev, item, [] -> item :: prev, '.', []
+  | prev, item, [] -> item :: prev, blank, []
 
-let prev = function
+let prev blank = function
   | prev :: prev_tl, item, next ->
     prev_tl, prev, item :: next
-  | [], item, next -> [], '.', item :: next
+  | [], item, next -> [], blank, item :: next
 
 let newCurrent tape newC =
   match tape with
   | prev, _, next -> prev, newC, next
 
-let print tape len =
+let print tape len blank =
   let rec printerLeft t l =
     if (l > 0) then
       begin
-        let newTape = prev t in
+        let newTape = prev blank t in
         printerLeft newTape (l - 1);
         print_char (current newTape);
       end
@@ -46,7 +45,7 @@ let print tape len =
   let rec printerRight t l =
     if (l > 0) then
       begin
-        let newTape = next t in
+        let newTape = next blank t in
         print_char (current newTape);
         printerRight newTape (l - 1)
       end
