@@ -1,6 +1,6 @@
 .PHONY:	all clean byte native profile debug test
 
-OCB_FLAGS = -pkg yojson -tag bin_annot
+OCB_FLAGS = -pkg yojson -tag bin_annot -lib graphics
 OCB = 		ocamlbuild $(OCB_FLAGS)
 
 all: native byte # profile debug

@@ -255,33 +255,6 @@ let compute (tape, description) =
   Tape.print tape 10 description.blank;
   computing tape description.initial
 
-let complexity (tape, description) =
-  let computeState state tape =
-    try
-      begin
-        match (CharMap.find (Tape.current tape) (StateMap.find state description.transitions)) with
-        | (to_state, write, action) -> Some (to_state, (
-            match action with
-            | "LEFT" -> Tape.prev description.blank (Tape.newCurrent tape write)
-            | "RIGHT" -> Tape.next description.blank (Tape.newCurrent tape write)
-            | _ -> raise Error
-          ))
-      end
-    with
-    | _ -> Failure "Error"
-  in
-  let rec computing tape current_state acc =
-    match search_state_opt current_state description.finals with
-    | None ->
-      begin
-        match (computeState current_state tape) with
-        | Some (next_state, newTape) -> computing newTape next_state (acc + 1)
-        | Failure e -> Failure e
-      end
-    | _ -> Some (acc)
-  in
-  computing tape description.initial 0
-
 module Complexity =
 struct
   let generate_add x = "1+" ^ (String.init x (fun _ -> '1')) ^ "="
@@ -291,22 +264,55 @@ struct
     | "unary_add.json" -> Some generate_add
     | _ -> Failure "impossible to calculate time complexity for this description"
 
-  let compute jsonfile =
-    let rec computing fn acc m =
-      match acc with
-      | 101 -> print_endline "FINISH"
-      | n ->
+  let complexity_of_machine (tape, description) =
+    let computeState state tape =
+      try
         begin
-          match (complexity m) with
-          | Failure e -> print_endline e
-          | Some n -> Printf.printf "input size %d -> %d ope\n" acc n;
-            computing fn (acc + 1) (changeTape m (fn (acc + 1)))
+          match (CharMap.find (Tape.current tape) (StateMap.find state description.transitions)) with
+          | (to_state, write, action) -> Some (to_state, (
+              match action with
+              | "LEFT" -> Tape.prev description.blank (Tape.newCurrent tape write)
+              | "RIGHT" -> Tape.next description.blank (Tape.newCurrent tape write)
+              | _ -> raise Error
+            ))
         end
+      with
+      | _ -> Failure "Error"
     in
+    let rec computing tape current_state acc =
+      match search_state_opt current_state description.finals with
+      | None ->
+        begin
+          match (computeState current_state tape) with
+          | Some (next_state, newTape) -> computing newTape next_state (acc + 1)
+          | Failure e -> 0
+        end
+      | _ -> acc
+    in
+    computing tape description.initial 0
+
+  let init () =
+    Graphics.open_graph " 800x600+0-0";
+    Graphics.set_window_title "Complexity of description";
+    Graphics.moveto 300 500; Graphics.set_font "-misc-dejavu sans mono-bold-r-normal--13-0-0-0-m-0-iso8859-1";
+    Graphics.draw_string "Big O Complexity";
+    Graphics.moveto 100 100; Graphics.lineto 100 450;
+    Graphics.moveto 100 100; Graphics.lineto 600 100
+
+  let display lst =
+    init ();
+    ignore(Graphics.read_key ());
+    Graphics.close_graph ()
+
+  let compute jsonfile =
     match (generate_function jsonfile) with
     | Failure e -> print_endline e
     | Some gen_f ->
+      begin
         match (getMachine jsonfile (gen_f 0)) with
         | Failure e -> print_endline e
-        | Some m -> computing gen_f 0 m
+        | Some m ->
+          let intList = List.init 101 (fun x -> complexity_of_machine (changeTape m (gen_f x))) in
+          display intList
+      end
 end

@@ -22,8 +22,6 @@ val printDescription : t -> unit
 
 val compute : t -> unit
 
-val complexity : t -> int trying
-
 module Complexity :
 sig
   val compute : string -> unit
