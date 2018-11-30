@@ -10,7 +10,7 @@
 			{ "read" : ".", "to_state": "scanright", "write": ".", "action": "RIGHT"},
 			{ "read" : "1", "to_state": "scanright", "write": "1", "action": "RIGHT"},
 			{ "read" : "+", "to_state": "scanright2", "write": "1", "action": "RIGHT"},
-			{ "read" : "=", "to_state": "eraseone" , "write": ".", "action": "LEFT" }
+			{ "read" : "=", "to_state": "HALT" , "write": ".", "action": "LEFT" }
 		],
 		"scanright2": [
 			{ "read" : ".", "to_state": "scanright2", "write": ".", "action": "RIGHT"},
