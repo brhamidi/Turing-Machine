@@ -42,6 +42,16 @@ exception Parsing_error of string
 
 exception Error
 
+let list_from_string str =
+  let rec get_list s i l =
+    if (i < 0) then l
+    else get_list s (i - 1) ((String.get s i) :: l) in
+  get_list str ((String.length str) - 1) []
+
+let changeTape (_, desc) input : t =
+  let newTape = Tape.tape_of_list desc.blank (list_from_string input) in
+  (newTape, desc)
+
 let getTransitions l =
   let f x y = match y with
     | `Assoc [("read", `String a); ("to_state", `String b); ("write", `String c); ("action", `String d)] ->
@@ -109,12 +119,6 @@ let getDescrition name : descriptions trying =
       | Parsing_error err -> Failure err
       | _ -> Failure "Error while parsing input"
     end
-
-let list_from_string str =
-  let rec get_list s i l =
-    if (i < 0) then l
-    else get_list s (i - 1) ((String.get s i) :: l) in
-  get_list str ((String.length str) - 1) []
 
 let search_alphabet_opt alphabet letter =
   List.find_opt (fun x -> (x = letter)) alphabet
@@ -278,29 +282,31 @@ let complexity (tape, description) =
   in
   computing tape description.initial 0
 
-let generate_add x = "1+" ^ (String.init x (fun _ -> '1')) ^ "="
+module Complexity =
+struct
+  let generate_add x = "1+" ^ (String.init x (fun _ -> '1')) ^ "="
 
-let print_time_complexity jsonfile =
-  let gen_fun = 
+  let generate_function jsonfile = 
     match jsonfile with
     | "unary_add.json" -> Some generate_add
     | _ -> Failure "impossible to calculate time complexity for this description"
-  in
-  let rec computing fn acc =
-    match acc with
-    | 101 -> print_endline "FINISH"
-    | n ->
-      begin
-        match (getMachine jsonfile (fn acc)) with
-        | Failure err -> print_endline err
-        | Some m ->
-          begin
-            match (complexity m) with
-            | Failure e -> print_endline e
-            | Some n -> Printf.printf "input size %d -> %d ope\n" acc n ; computing fn (acc + 1)
-          end
-      end
-  in
-  match gen_fun with
-  | Failure e -> print_endline e
-  | Some gen_f -> computing gen_f 0
+
+  let compute jsonfile =
+    let rec computing fn acc m =
+      match acc with
+      | 101 -> print_endline "FINISH"
+      | n ->
+        begin
+          match (complexity m) with
+          | Failure e -> print_endline e
+          | Some n -> Printf.printf "input size %d -> %d ope\n" acc n;
+            computing fn (acc + 1) (changeTape m (fn (acc + 1)))
+        end
+    in
+    match (generate_function jsonfile) with
+    | Failure e -> print_endline e
+    | Some gen_f ->
+        match (getMachine jsonfile (gen_f 0)) with
+        | Failure e -> print_endline e
+        | Some m -> computing gen_f 0 m
+end

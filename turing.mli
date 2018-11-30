@@ -16,12 +16,15 @@ type 'a trying = Some of 'a | Failure of string
 
 val getMachine : string -> string -> t trying
 
+val changeTape : t -> string -> t
+
 val printDescription : t -> unit
 
 val compute : t -> unit
 
 val complexity : t -> int trying
 
-(* TODO  add these function into `Complexity module` *)
-
-val print_time_complexity : string -> unit
+module Complexity :
+sig
+  val compute : string -> unit
+end

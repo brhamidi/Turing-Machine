@@ -32,6 +32,6 @@ let main jsonfile input =
 
 let () =
   match (Array.to_list Sys.argv) with
-  | _ :: jsonfile :: "--complexity" :: [] -> Turing.print_time_complexity jsonfile
+  | _ :: jsonfile :: "--complexity" :: [] -> Turing.Complexity.compute jsonfile
   | _ :: jsonfile :: input :: [] -> main jsonfile input
   | _ -> usage (Array.get Sys.argv 0)
