@@ -6,7 +6,7 @@
 (*   By: bhamidi <marvin@42.fr>                     +#+  +:+       +#+        *)
 (*                                                +#+#+#+#+#+   +#+           *)
 (*   Created: 2018/11/14 16:37:19 by bhamidi           #+#    #+#             *)
-(*   Updated: 2018/11/22 17:41:19 by msrun            ###   ########.fr       *)
+(*   Updated: 2018/11/30 17:28:08 by msrun            ###   ########.fr       *)
 (*                                                                            *)
 (* ************************************************************************** *)
 
@@ -292,12 +292,12 @@ struct
     computing tape description.initial 0
 
   let init () =
-    Graphics.open_graph " 800x600+0-0";
+    Graphics.open_graph " 1300x900+0-0";
     Graphics.set_window_title "Complexity of description";
-    Graphics.moveto 300 500; Graphics.set_font "-misc-dejavu sans mono-bold-r-normal--13-0-0-0-m-0-iso8859-1";
+    Graphics.moveto 600 800; 
     Graphics.draw_string "Big O Complexity";
-    Graphics.moveto 100 100; Graphics.lineto 100 450;
-    Graphics.moveto 100 100; Graphics.lineto 600 100
+    Graphics.moveto 100 100; Graphics.lineto 100 700;
+    Graphics.moveto 100 100; Graphics.lineto 1100 100
 
   let display lst =
     init ();
