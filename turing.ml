@@ -292,12 +292,14 @@ struct
     computing tape description.initial 0
 
   let init () =
-    Graphics.open_graph " 1300x900+0-0";
+    Graphics.open_graph " 1300x800+0-0";
     Graphics.set_window_title "Complexity of description";
-    Graphics.moveto 600 800; 
+    Graphics.moveto 600 700; 
     Graphics.draw_string "Big O Complexity";
-    Graphics.moveto 100 100; Graphics.lineto 100 700;
-    Graphics.moveto 100 100; Graphics.lineto 1100 100
+    Graphics.moveto 100 100; Graphics.lineto 100 600;
+    Graphics.moveto 100 100; Graphics.lineto 1100 100;
+    List.iter (fun x -> Graphics.moveto (100 + (x * 10)) 80;Graphics.draw_string (string_of_int x)) (List.init 11 (fun x -> x * 10));
+    List.iter (fun x -> Graphics.moveto 75 (100 + (x / 2));Graphics.draw_string (string_of_int x)) (List.init 11 (fun x -> x * 100))
 
   let display lst =
     init ();
