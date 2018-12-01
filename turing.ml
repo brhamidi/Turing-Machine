@@ -296,17 +296,18 @@ struct
     else if e = 0 then 1
     else x * (power x (e - 1))
 
-  let init () =
+  let init filename =
     Graphics.open_graph " 1300x800+0-0";
     Graphics.set_window_title "Complexity of description";
     Graphics.moveto 600 700; 
-    Graphics.draw_string "Big O Complexity";
+    Graphics.draw_string "Big O Complexity for "; Graphics.draw_string filename; Graphics.draw_string " description";
+    Graphics.set_line_width 2;
     Graphics.moveto 100 100; Graphics.lineto 100 600;
     Graphics.moveto 100 100; Graphics.lineto 1100 100;
     List.iter (fun x -> Graphics.moveto (100 + (x * 10)) 80;Graphics.draw_string (string_of_int x)) (List.init 11 (fun x -> x * 10));
     List.iter (fun x -> Graphics.moveto 75 (100 + (x / 2));Graphics.draw_string (string_of_int x)) (List.init 11 (fun x -> x * 100))
 
-  let init_curv () =
+  let init_curv intList =
     let lst = List.init 101 (fun x -> x) in
     let putX = fun x -> 100 + (x * 10) in
     let putY = fun f x -> (100 + ((f x) / 2)) in
@@ -316,15 +317,26 @@ struct
     let nlogn = fun x -> let floatx = float_of_int x in int_of_float (floatx *. log(floatx)) in
     let rec fact n = if n = 7 then 1000 else if n > 7 then 2000 else if n = 0 then 1 else n * fact (n -1) in
     let getFonction fn = fun x -> let y = putY fn x in if y < 601 then Graphics.lineto (putX x) y in
-    Graphics.moveto 100 100; List.iter (getFonction nComplexity) lst;
-    Graphics.moveto 100 100; List.iter (getFonction n2Complexity) lst;
-    Graphics.moveto 100 100; List.iter (getFonction fact) lst;
-    Graphics.moveto 100 100; List.iter (getFonction n2nComplexity) lst;
-    Graphics.moveto 100 100; List.iter (getFonction nlogn) lst
+    let printO str = Graphics.set_color Graphics.black; Graphics.draw_string str in
+    Graphics.set_line_width 4;
+    Graphics.set_color Graphics.cyan; Graphics.moveto 100 100; List.iter (getFonction nComplexity) lst;
+    Graphics.moveto 1150 600; Graphics.lineto 1190 600; printO " O(n)";
+    Graphics.set_color Graphics.magenta; Graphics.moveto 100 100; List.iter (getFonction nlogn) lst;
+    Graphics.moveto 1150 580; Graphics.lineto 1190 580; printO " O(nlogn)";
+    Graphics.set_color Graphics.green; Graphics.moveto 100 100; List.iter (getFonction n2Complexity) lst;
+    Graphics.moveto 1150 560; Graphics.lineto 1190 560; printO " O(n^2)";
+    Graphics.set_color Graphics.red; Graphics.moveto 100 100; List.iter (getFonction n2nComplexity) lst;
+    Graphics.moveto 1150 540; Graphics.lineto 1190 540; printO " O(2^n)";
+    Graphics.set_color Graphics.blue; Graphics.moveto 100 100; List.iter (getFonction fact) lst;
+    Graphics.moveto 1150 520; Graphics.lineto 1190 520; printO " O(!n)";
 
-  let display lst =
-    init ();
-    init_curv ();
+    Graphics.set_color Graphics.black; Graphics.moveto 100 100;
+    List.iteri (fun i x -> Graphics.lineto (putX i) (putY (fun x -> x) x)) intList;
+    Graphics.moveto 1150 480; Graphics.lineto 1190 480; printO " Your Curve"
+
+  let display lst filename =
+    init filename;
+    init_curv lst;
     ignore(Graphics.read_key ());
     Graphics.close_graph ()
 
@@ -337,6 +349,6 @@ struct
         | Failure e -> print_endline e
         | Some m ->
           let intList = List.init 101 (fun x -> complexity_of_machine (changeTape m (gen_f x))) in
-          display intList
+          display intList jsonfile
       end
 end
