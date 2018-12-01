@@ -291,6 +291,11 @@ struct
     in
     computing tape description.initial 0
 
+  let rec power x e =
+    if e = 1 then x
+    else if e = 0 then 1
+    else x * (power x (e - 1))
+
   let init () =
     Graphics.open_graph " 1300x800+0-0";
     Graphics.set_window_title "Complexity of description";
@@ -299,13 +304,27 @@ struct
     Graphics.moveto 100 100; Graphics.lineto 100 600;
     Graphics.moveto 100 100; Graphics.lineto 1100 100;
     List.iter (fun x -> Graphics.moveto (100 + (x * 10)) 80;Graphics.draw_string (string_of_int x)) (List.init 11 (fun x -> x * 10));
-    List.iter (fun x -> Graphics.moveto 75 (100 + (x / 2));Graphics.draw_string (string_of_int x)) (List.init 11 (fun x -> x * 100));
+    List.iter (fun x -> Graphics.moveto 75 (100 + (x / 2));Graphics.draw_string (string_of_int x)) (List.init 11 (fun x -> x * 100))
+
+  let init_curv () =
+    let lst = List.init 101 (fun x -> x) in
+    let putX = fun x -> 100 + (x * 10) in
+    let putY = fun f x -> (100 + ((f x) / 2)) in
     let nComplexity = fun n -> n in
-    Graphics.moveto 100 100;
-    List.iter (fun x -> Graphics.lineto (100 + (x * 10)) (100 + ((nComplexity x) / 2))) (List.init 101 (fun n -> n))
+    let n2Complexity = fun n -> n * n in
+    let n2nComplexity = fun n -> if n = 10 then 1000 else if n > 10 then 2000 else power 2 n in
+    let nlogn = fun x -> let floatx = float_of_int x in int_of_float (floatx *. log(floatx)) in
+    let rec fact n = if n = 7 then 1000 else if n > 7 then 2000 else if n = 0 then 1 else n * fact (n -1) in
+    let getFonction fn = fun x -> let y = putY fn x in if y < 601 then Graphics.lineto (putX x) y in
+    Graphics.moveto 100 100; List.iter (getFonction nComplexity) lst;
+    Graphics.moveto 100 100; List.iter (getFonction n2Complexity) lst;
+    Graphics.moveto 100 100; List.iter (getFonction fact) lst;
+    Graphics.moveto 100 100; List.iter (getFonction n2nComplexity) lst;
+    Graphics.moveto 100 100; List.iter (getFonction nlogn) lst
 
   let display lst =
     init ();
+    init_curv ();
     ignore(Graphics.read_key ());
     Graphics.close_graph ()
 
