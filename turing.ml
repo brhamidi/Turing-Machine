@@ -258,10 +258,12 @@ let compute (tape, description) =
 module Complexity =
 struct
   let generate_add x = "1+" ^ (String.init x (fun _ -> '1')) ^ "="
+  let generate_sub x = (String.init x (fun _ -> '1')) ^ "-" ^ (String.init x (fun _ -> '1')) ^ "="
 
   let generate_function jsonfile = 
     match jsonfile with
     | "unary_add.json" -> Some generate_add
+    | "unary_sub.json" -> Some generate_sub
     | _ -> Failure "impossible to calculate time complexity for this description"
 
   let complexity_of_machine (tape, description) =
@@ -330,8 +332,9 @@ struct
     Graphics.set_color Graphics.blue; Graphics.moveto 100 100; List.iter (getFonction fact) lst;
     Graphics.moveto 1150 520; Graphics.lineto 1190 520; printO " O(!n)";
 
+    (* description curve *)
     Graphics.set_color Graphics.black; Graphics.moveto 100 100;
-    List.iteri (fun i x -> Graphics.lineto (putX i) (putY (fun x -> x) x)) intList;
+    List.iteri (fun i x -> let y = putY (fun x -> x) x in if y < 601 then Graphics.lineto (putX i) y) intList;
     Graphics.moveto 1150 480; Graphics.lineto 1190 480; printO " Your Curve"
 
   let display lst filename =
