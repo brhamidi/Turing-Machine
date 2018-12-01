@@ -299,7 +299,10 @@ struct
     Graphics.moveto 100 100; Graphics.lineto 100 600;
     Graphics.moveto 100 100; Graphics.lineto 1100 100;
     List.iter (fun x -> Graphics.moveto (100 + (x * 10)) 80;Graphics.draw_string (string_of_int x)) (List.init 11 (fun x -> x * 10));
-    List.iter (fun x -> Graphics.moveto 75 (100 + (x / 2));Graphics.draw_string (string_of_int x)) (List.init 11 (fun x -> x * 100))
+    List.iter (fun x -> Graphics.moveto 75 (100 + (x / 2));Graphics.draw_string (string_of_int x)) (List.init 11 (fun x -> x * 100));
+    let nComplexity = fun n -> n in
+    Graphics.moveto 100 100;
+    List.iter (fun x -> Graphics.lineto (100 + (x * 10)) (100 + ((nComplexity x) / 2))) (List.init 101 (fun n -> n))
 
   let display lst =
     init ();
