@@ -257,13 +257,19 @@ let compute (tape, description) =
 
 module Complexity =
 struct
+  let generate_02n x = String.init x (fun _ -> '0') ^ "="
+  let generate_0n1n x = String.init x (fun _ -> '0') ^ String.init x (fun _ -> '1') ^ "="
   let generate_add x = "1+" ^ (String.init x (fun _ -> '1')) ^ "="
   let generate_sub x = (String.init x (fun _ -> '1')) ^ "-" ^ (String.init x (fun _ -> '1')) ^ "="
+  let generate_palindrome x = String.init x (fun _ -> '0') ^ String.init x (fun _ -> '1') ^ String.init x (fun _ -> '0') ^ "="
 
   let generate_function jsonfile = 
     match jsonfile with
     | "unary_add.json" -> Some generate_add
     | "unary_sub.json" -> Some generate_sub
+    | "unary_02n.json" -> Some generate_02n
+    | "unary_0n1n.json" -> Some generate_0n1n
+    | "unary_palindrome.json" -> Some generate_palindrome
     | _ -> Failure "impossible to calculate time complexity for this description"
 
   let complexity_of_machine (tape, description) =
