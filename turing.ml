@@ -312,10 +312,12 @@ struct
     Graphics.set_line_width 2;
     Graphics.moveto 100 100; Graphics.lineto 100 600;
     Graphics.moveto 100 100; Graphics.lineto 1100 100;
+    Graphics.moveto 1060 45 ; Graphics.draw_string "element";
+    Graphics.moveto 20 620 ; Graphics.draw_string "operation";
     List.iter (fun x -> Graphics.moveto (100 + (x * 10)) 80;Graphics.draw_string (string_of_int x)) (List.init 11 (fun x -> x * 10));
     List.iter (fun x -> Graphics.moveto 75 (100 + (x / 2));Graphics.draw_string (string_of_int x)) (List.init 11 (fun x -> x * 100))
 
-  let init_curv intList =
+  let print_curv intList =
     let lst = List.init 101 (fun x -> x) in
     let putX = fun x -> 100 + (x * 10) in
     let putY = fun f x -> (100 + ((f x) / 2)) in
@@ -345,7 +347,7 @@ struct
 
   let display lst filename =
     init filename;
-    init_curv lst;
+    print_curv lst;
     ignore(Graphics.read_key ());
     Graphics.close_graph ()
 
