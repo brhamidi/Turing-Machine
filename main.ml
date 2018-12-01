@@ -11,8 +11,14 @@
 (* ************************************************************************** *)
 
 let usage bin =
-  print_string bin ; print_endline " jsonfile --complexity";
-  print_string bin ; print_endline " jsonfile input"
+  Printf.printf "usage:\n\t%s [-h] jsonfile --complexity" bin ;
+  Printf.printf "\n\t%s [-h] jsonfile input\n" bin;
+  Printf.printf "\npositional arguments:\n";
+  Printf.printf "  jsonfile\t\tjson description of the machine\n";
+  Printf.printf "  input\t\t\tjson input of the machine\n";
+  Printf.printf "  --complexity\t\tdisplay graphic curves of time complexity\n";
+  Printf.printf "\noptional arguments:\n";
+  Printf.printf "  -h, --help\t\t show this help message and exit\n"
 
 let main jsonfile input =
   match (Turing.getMachine jsonfile input) with
@@ -32,6 +38,8 @@ let main jsonfile input =
 
 let () =
   match (Array.to_list Sys.argv) with
+  | _ :: "-h" :: _ -> usage (Array.get Sys.argv 0)
+  | _ :: "--help" :: _ -> usage (Array.get Sys.argv 0)
   | _ :: jsonfile :: "--complexity" :: [] -> Turing.Complexity.compute jsonfile
   | _ :: jsonfile :: input :: [] -> main jsonfile input
   | _ -> usage (Array.get Sys.argv 0)
