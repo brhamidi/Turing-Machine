@@ -309,13 +309,15 @@ struct
     Graphics.set_window_title "Complexity of description";
     Graphics.moveto 600 700; 
     Graphics.draw_string "Big O Complexity for "; Graphics.draw_string filename; Graphics.draw_string " description";
-    Graphics.set_line_width 2;
+    Graphics.set_line_width 3;
     Graphics.moveto 100 100; Graphics.lineto 100 600;
     Graphics.moveto 100 100; Graphics.lineto 1100 100;
     Graphics.moveto 1060 45 ; Graphics.draw_string "element";
     Graphics.moveto 20 620 ; Graphics.draw_string "operation";
     List.iter (fun x -> Graphics.moveto (100 + (x * 10)) 80;Graphics.draw_string (string_of_int x)) (List.init 11 (fun x -> x * 10));
-    List.iter (fun x -> Graphics.moveto 75 (100 + (x / 2));Graphics.draw_string (string_of_int x)) (List.init 11 (fun x -> x * 100))
+    List.iter (fun x -> Graphics.moveto 75 (100 + (x / 2));Graphics.draw_string (string_of_int x)) (List.init 11 (fun x -> x * 100));
+    Graphics.set_line_width 0;
+    List.iter (fun x -> Graphics.moveto 100 (100 + x); Graphics.lineto (1100) (100 + x)) (List.init 11 (fun x -> x * 50))
 
   let print_curv intList =
     let lst = List.init 101 (fun x -> x) in
@@ -328,7 +330,7 @@ struct
     let rec fact n = if n = 7 then 1000 else if n > 7 then 2000 else if n = 0 then 1 else n * fact (n -1) in
     let getFonction fn = fun x -> let y = putY fn x in if y < 601 then Graphics.lineto (putX x) y in
     let printO str = Graphics.set_color Graphics.black; Graphics.draw_string str in
-    Graphics.set_line_width 4;
+    Graphics.set_line_width 3;
     Graphics.set_color Graphics.cyan; Graphics.moveto 100 100; List.iter (getFonction nComplexity) lst;
     Graphics.moveto 1150 600; Graphics.lineto 1190 600; printO " O(n)";
     Graphics.set_color Graphics.magenta; Graphics.moveto 100 100; List.iter (getFonction nlogn) lst;
