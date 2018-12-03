@@ -29,8 +29,10 @@ Install json library using opam
 opam install yojson
 ```
 
-## Example
+## Example with unary sub description
 
+![Compute unary sub description](https://raw.githubusercontent.com/brhamidi/Turing-Machine/master/example_sub.png)
+</br>
 ![Time Complexity Mode](https://raw.githubusercontent.com/brhamidi/Turing-Machine/master/turing_curve.png)
 </br>
 
