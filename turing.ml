@@ -224,7 +224,7 @@ let printDescription (_, description) =
   print_endline ("Alphabet: [" ^ (get_alphabet description.alphabet) ^ "]");
   print_endline ("States  : [" ^ get_strs description.states ^ "]");
   print_endline ("Initial : " ^ description.initial);
-  print_endline ("Finals  : " ^ get_strs description.finals);
+  print_endline ("Finals  : [ " ^ get_strs description.finals ^ " ]");
   StateMap.iter (fun sk sv -> CharMap.iter (fun ck (ns, nc, mov) -> print_endline ("(" ^ sk ^ ", " ^ ck ^$ ") -> (" ^ ns ^ ", " ^ nc ^$ ", " ^ mov ^ ")")) sv) description.transitions
 
 let compute (tape, description) =
