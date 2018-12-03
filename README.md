@@ -16,7 +16,7 @@ For Mac OS
 brew install ocaml--with-x11 
 brew install opam
 ```
-For Gnu/Linux use your package manager.
+For GNU/Linux use your distribution package manager.
 
 example for Arch linux
 ```
