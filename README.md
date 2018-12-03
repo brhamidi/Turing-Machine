@@ -43,8 +43,8 @@ opam install yojson
 
 ## Authors
 
-* **Matthias Srun ** - [Matthias-Srun](https://github.com/)
-* **Brahim Hamidi ** - [brhamidi](https://github.com/brhamidi)
+* Matthias Srun - [Matthias-Srun](https://github.com/)
+* Brahim Hamidi - [brhamidi](https://github.com/brhamidi)
 
 ## License
 
