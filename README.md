@@ -7,10 +7,6 @@ Program able to simulate a Turing machine from a machine description provided in
 - X server 
 - Yojson (Json library for Ocaml)
 
-```
-Give examples
-```
-
 ### Installing
 
 Installing Ocaml and Opam.
