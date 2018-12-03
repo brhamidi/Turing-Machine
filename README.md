@@ -29,7 +29,19 @@ Install json library using opam
 opam install yojson
 ```
 
+## Compiling
+
+```
+make
+
+./main.native --help
+```
+
 ## Example with unary sub description
+
+```
+./main.native unary_sub.json 1-1=
+```
 
 ![Compute unary sub description](https://raw.githubusercontent.com/brhamidi/Turing-Machine/master/example_sub.png)
 </br>
