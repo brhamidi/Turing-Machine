@@ -6,7 +6,7 @@
 (*   By: bhamidi <marvin@42.fr>                     +#+  +:+       +#+        *)
 (*                                                +#+#+#+#+#+   +#+           *)
 (*   Created: 2018/11/14 16:37:19 by bhamidi           #+#    #+#             *)
-(*   Updated: 2018/11/30 17:28:08 by msrun            ###   ########.fr       *)
+(*   Updated: 2018/12/03 16:05:50 by msrun            ###   ########.fr       *)
 (*                                                                            *)
 (* ************************************************************************** *)
 
@@ -320,6 +320,8 @@ struct
     List.iter (fun x -> Graphics.moveto 100 (100 + x); Graphics.lineto (1100) (100 + x)) (List.init 11 (fun x -> x * 50))
 
   let print_curv intList =
+    let findx oldy newy x =
+      let y = (newy - oldy) / 10 in let rec fx acc newx = if (acc >= 600) then newx else fx (acc + y) (newx + 1) in 100 + (x * 10) + (fx oldy 0) in
     let lst = List.init 101 (fun x -> x) in
     let putX = fun x -> 100 + (x * 10) in
     let putY = fun f x -> (100 + ((f x) / 2)) in
@@ -327,8 +329,14 @@ struct
     let n2Complexity = fun n -> n * n in
     let n2nComplexity = fun n -> if n = 10 then 1000 else if n > 10 then 2000 else power 2 n in
     let nlogn = fun x -> let floatx = float_of_int x in int_of_float (floatx *. log(floatx)) in
-    let rec fact n = if n = 7 then 1000 else if n > 7 then 2000 else if n = 0 then 1 else n * fact (n -1) in
-    let getFonction fn = fun x -> let y = putY fn x in if y < 601 then Graphics.lineto (putX x) y in
+    let rec fact n = if n > 7 then 2000 else if n = 0 then 1 else n * fact (n -1) in
+    let getFonction fn =
+      fun x -> let y = putY fn x in
+        if (x < 1 || putY fn (x - 1) <= 600)
+        then Graphics.lineto (
+            if y > 600
+            then (findx (putY fn (x - 1)) y (x - 1))
+            else putX x) (if y > 600 then 600 else y) in
     let printO str = Graphics.set_color Graphics.black; Graphics.draw_string str in
     Graphics.set_line_width 3;
     Graphics.set_color Graphics.cyan; Graphics.moveto 100 100; List.iter (getFonction nComplexity) lst;
@@ -344,7 +352,20 @@ struct
 
     (* description curve *)
     Graphics.set_color Graphics.black; Graphics.moveto 100 100;
-    List.iteri (fun i x -> let y = putY (fun x -> x) x in if y < 601 then Graphics.lineto (putX i) y) intList;
+   (* List.iteri (fun i x -> let y = putY (fun x -> x) x in if y < 601 then Graphics.lineto (putX i) y) intList;*)
+    let rec iterlist l prev x =
+      match l with
+      | head :: next ->
+        let y = putY (fun x -> x) head in
+        (
+          if (prev < 600)
+          then Graphics.lineto (
+              if y > 600
+              then (findx prev y (x - 1))
+              else putX x) (if y > 600 then 600 else y)
+        ); iterlist next y (x + 1)
+      | [] -> () in
+    iterlist intList 0 0;
     Graphics.moveto 1150 480; Graphics.lineto 1190 480; printO " Your Curve"
 
   let display lst filename =
