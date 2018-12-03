@@ -34,13 +34,13 @@ opam install yojson
 ```
 make
 
-./main.native --help
+./ft_turing --help
 ```
 
 ## Example with unary sub description
 
 ```
-./main.native unary_sub.json 1-1=
+./ft_turing unary_sub.json 1-1=
 ```
 
 ![Compute unary sub description](https://raw.githubusercontent.com/brhamidi/Turing-Machine/master/example_sub.png)
