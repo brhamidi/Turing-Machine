@@ -5,8 +5,8 @@
 (*                                                    +:+ +:+         +:+     *)
 (*   By: bhamidi <marvin@42.fr>                     +#+  +:+       +#+        *)
 (*                                                +#+#+#+#+#+   +#+           *)
-(*   Created: 2018/11/14 16:37:19 by bhamidi           #+#    #+#             *)
-(*   Updated: 2018/12/03 16:05:50 by msrun            ###   ########.fr       *)
+(*   Created: 2018/11/14 16:47:19 by bhamidi           #+#    #+#             *)
+(*   Updated: 2018/12/03 16:05:51 by msrun            ###   ########.fr       *)
 (*                                                                            *)
 (* ************************************************************************** *)
 
@@ -352,7 +352,6 @@ struct
 
     (* description curve *)
     Graphics.set_color Graphics.black; Graphics.moveto 100 100;
-   (* List.iteri (fun i x -> let y = putY (fun x -> x) x in if y < 601 then Graphics.lineto (putX i) y) intList;*)
     let rec iterlist l prev x =
       match l with
       | head :: next ->

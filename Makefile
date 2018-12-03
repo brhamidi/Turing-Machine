@@ -1,30 +1,48 @@
-.PHONY:	all clean byte native profile debug test
+# **************************************************************************** #
+#                                                                              #
+#                                                         :::      ::::::::    #
+#    Makefile                                           :+:      :+:    :+:    #
+#                                                     +:+ +:+         +:+      #
+#    By: bhamidi <marvin@42.fr>                     +#+  +:+       +#+         #
+#                                                 +#+#+#+#+#+   +#+            #
+#    Created: 2018/05/20 19:05:42 by bhamidi           #+#    #+#              #
+#    Updated: 2018/06/30 13:25:40 by bhamidi          ###   ########.fr        #
+#                                                                              #
+# **************************************************************************** #
 
-OCB_FLAGS = -pkg yojson -tag bin_annot -lib graphics
-OCB = 		ocamlbuild $(OCB_FLAGS)
+#  ocamlc -o turing  turing.mli tape.ml turing.ml main.ml
 
-all: native byte # profile debug
+NAME		= ft_turing
+CAMLOPT		= ocamlopt
+CAMLC		= ocamlc
+CAMLFLAGS	= -linkpkg -package graphics -package yojson
+
+CMI		= turing.cmi tape.cmi main.cmi
+CMX		= turing.cmx tape.cmx main.cmx
+CMO		= turing.cmo tape.cmo main.cmo
+ML		= turing.mli tape.ml turing.ml main.ml
+OBJ		= turing.o tape.o main.o
+
+all: $(NAME)
+
+$(NAME): $(CMI)
+	ocamlfind $(CAMLOPT) $(CAMLFLAGS) $(ML) -o $(NAME)
+
+byte: $(CMI)
+	ocamlfind $(CAMLC) $(CAMLFLAGS) $(ML) -o $(NAME)
+
+%.cmi: %.ml Makefile
+	ocamlfind $(CAMLOPT) $(CAMLFLAGS) $(ML) -c -o $@
 
 clean:
-		$(OCB) -clean
+	rm -f $(OBJ)
+	rm -f $(CMI)
+	rm -f $(CMX)
+	rm -f $(CMO)
 
-native:
-		$(OCB) main.native
+fclean : clean
+	rm -f $(NAME)
 
-byte:
-		$(OCB) main.byte
+re : fclean all
 
-profile:
-		$(OCB) -tag profile main.native
-
-debug:
-		$(OCB) -tag debug main.byte
-
-run: native
-		./main.native
-
-native-test:
-		$(OCB) test.native
-
-test: native-test
-		./test.native
+.PHONY: all fclean clean re
