@@ -29,6 +29,10 @@ Install json library using opam
 opam install yojson
 ```
 
+## Example
+
+![Time Complexity Mode](https://raw.githubusercontent.com/brhamidi/Turing-Machine/master/turing_curve.png)
+</br>
 
 ## key learning
 
