@@ -6,7 +6,7 @@
 (*   By: bhamidi <marvin@42.fr>                     +#+  +:+       +#+        *)
 (*                                                +#+#+#+#+#+   +#+           *)
 (*   Created: 2018/11/14 16:47:19 by bhamidi           #+#    #+#             *)
-(*   Updated: 2018/12/04 15:46:41 by msrun            ###   ########.fr       *)
+(*   Updated: 2018/12/04 15:56:23 by msrun            ###   ########.fr       *)
 (*                                                                            *)
 (* ************************************************************************** *)
 
@@ -35,8 +35,6 @@ type descriptions =
 type t = (Tape.t * descriptions)
 
 type 'a trying = Some of 'a | Failure of string
-
-type move = Right | Left
 
 exception Parsing_error of string
 
