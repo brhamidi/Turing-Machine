@@ -6,7 +6,7 @@
 (*   By: bhamidi <marvin@42.fr>                     +#+  +:+       +#+        *)
 (*                                                +#+#+#+#+#+   +#+           *)
 (*   Created: 2018/11/14 16:47:19 by bhamidi           #+#    #+#             *)
-(*   Updated: 2018/12/03 16:05:51 by msrun            ###   ########.fr       *)
+(*   Updated: 2018/12/04 15:46:41 by msrun            ###   ########.fr       *)
 (*                                                                            *)
 (* ************************************************************************** *)
 
@@ -350,7 +350,6 @@ struct
     Graphics.set_color Graphics.blue; Graphics.moveto 100 100; List.iter (getFonction fact) lst;
     Graphics.moveto 1150 520; Graphics.lineto 1190 520; printO " O(!n)";
 
-    (* description curve *)
     Graphics.set_color Graphics.black; Graphics.moveto 100 100;
     let rec iterlist l prev x =
       match l with

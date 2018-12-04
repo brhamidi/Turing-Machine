@@ -6,13 +6,12 @@
 #    By: bhamidi <marvin@42.fr>                     +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/05/20 19:05:42 by bhamidi           #+#    #+#              #
-#    Updated: 2018/06/30 13:25:40 by bhamidi          ###   ########.fr        #
+#    Updated: 2018/12/04 15:47:54 by msrun            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-#  ocamlc -o turing  turing.mli tape.ml turing.ml main.ml
-
-NAME		= ft_turing
+NAME1		= ft_turing.native
+NAME2		= ft_turing.byte
 CAMLOPT		= ocamlopt
 CAMLC		= ocamlc
 CAMLFLAGS	= -linkpkg -package graphics -package yojson
@@ -23,16 +22,17 @@ CMO		= turing.cmo tape.cmo main.cmo
 ML		= turing.mli tape.ml turing.ml main.ml
 OBJ		= turing.o tape.o main.o
 
-all: $(NAME)
+all: native
 
-$(NAME): $(CMI)
-	ocamlfind $(CAMLOPT) $(CAMLFLAGS) $(ML) -o $(NAME)
+native: $(NAME1) Makefile
 
-byte: $(CMI)
-	ocamlfind $(CAMLC) $(CAMLFLAGS) $(ML) -o $(NAME)
+byte: $(NAME2) Makefile
 
-%.cmi: %.ml Makefile
-	ocamlfind $(CAMLOPT) $(CAMLFLAGS) $(ML) -c -o $@
+$(NAME1): $(ML)
+	ocamlfind $(CAMLOPT) $(CAMLFLAGS) $(ML) -o $@
+
+$(NAME2): $(ML)
+	ocamlfind $(CAMLC) $(CAMLFLAGS) $(ML) -o $@
 
 clean:
 	rm -f $(OBJ)
@@ -41,7 +41,8 @@ clean:
 	rm -f $(CMO)
 
 fclean : clean
-	rm -f $(NAME)
+	rm -f $(NAME1)
+	rm -f $(NAME2)
 
 re : fclean all
 
